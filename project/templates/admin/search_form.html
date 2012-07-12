@@ -1,0 +1,29 @@
+{% load i18n admin_static %}
+
+{% if cl.search_fields %}
+<form id="changelist-search" class="form-search" action="" method="get">
+    <fieldset>
+        <input type="text" size="40" class="search-query" name="{{ search_var }}" value="{{ cl.query }}" placeholder="{% trans "Search" %}" id="searchbar" />
+
+        {% if show_result_count %}
+            <hr />
+
+            <div class="well">
+                {% blocktrans count counter=cl.result_count %}
+                    {{ counter }} result{% plural %}{{ counter }} results
+                {% endblocktrans %} (<a href="?{% if cl.is_popup %}pop=1{% endif %}">
+                    {% blocktrans with full_result_count=cl.full_result_count %}{{ full_result_count }} total{% endblocktrans %}
+                </a>)
+            </div>
+        {% endif %}
+        
+        {% for pair in cl.params.items %}
+            {% ifnotequal pair.0 search_var %}
+                <input type="hidden" name="{{ pair.0 }}" value="{{ pair.1 }}"/>
+            {% endifnotequal %}
+        {% endfor %}
+
+    </fieldset>
+</form>
+<script type="text/javascript">document.getElementById("searchbar").focus();</script>
+{% endif %}

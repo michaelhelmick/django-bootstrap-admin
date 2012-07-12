@@ -1,0 +1,139 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static admin_list %}
+{% load url from future %}
+{% load admin_urls %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  {% if cl.formset or action_form %}
+    {% url 'admin:jsi18n' as jsi18nurl %}
+    <script type="text/javascript" src="{{ jsi18nurl|default:'../../jsi18n/' }}"></script>
+  {% endif %}
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+{{ media.js }}
+{% if action_form %}{% if actions_on_top or actions_on_bottom %}
+<script type="text/javascript">
+(function($) {
+    $(document).ready(function($) {
+        $("tr input.action-select").actions();
+    });
+})(django.jQuery);
+</script>
+{% endif %}{% endif %}
+{% endblock %}
+
+{% block bodyclass %}change-list{% endblock %}
+
+{% if not is_popup %}
+{% block right_of_title %}
+    <div class="pull-right">
+    {% block object-tools %}
+        {% if has_add_permission %}
+            {% block object-tools-items %}
+            <a href="{% url cl.opts|admin_urlname:'add' %}{% if is_popup %}?_popup=1{% endif %}" class="addlink btn">
+                <i class="icon-plus"></i>
+                {% blocktrans with cl.opts.verbose_name as name %}Add {{ name }}{% endblocktrans %}
+            </a>
+            {% endblock %}
+        {% endif %}
+    {% endblock %}
+    </div>
+{% endblock %}
+
+{% block breadcrumbs %}
+<li>
+    <a href="{% url 'admin:index' %}">
+        {% trans 'Home' %}
+    </a>
+    <span class="divider">/</span>
+</li>
+<li>
+    <a href="{% url 'admin:app_list' app_label=cl.opts.app_label %}">
+        {{ app_label|capfirst|escape }}
+    </a>
+    <span class="divider">/</span>
+</li>
+<li class="active">
+    {{ cl.opts.verbose_name_plural|capfirst }}
+</li>
+{% endblock %}
+{% endif %}
+
+{% block content %}
+<div class="span7">
+    <form id="changelist-form" action="" method="post"{% if cl.formset.is_multipart %} enctype="multipart/form-data"{% endif %}>
+        <fieldset>
+            {% csrf_token %}
+
+            {% block result_list %}
+                {% if action_form and actions_on_top and cl.full_result_count %}
+                    {% admin_actions %}
+                {% endif %}
+
+                {% result_list cl %}
+
+                {% if action_form and actions_on_bottom and cl.full_result_count %}
+                    {% admin_actions %}
+                {% endif %}
+            {% endblock %}
+
+            {% if cl.formset %}
+                <div>{{ cl.formset.management_form }}</div>
+            {% endif %}
+
+        </fieldset>
+    </form>
+
+    {% block pagination %}
+        {% pagination cl %}
+    {% endblock %}
+</div>
+{% endblock %}
+
+
+
+{% block sidebar %}
+<div class="span3">
+    {% block search %}
+        {% search_form cl %}
+    {% endblock %}
+
+    {% block filters %}
+        {% if cl.has_filters %}
+          <div>
+            <h2>{% trans 'Filter' %}</h2>
+            {% for spec in cl.filter_specs %}
+                {% admin_list_filter cl spec %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endblock %}
+</div>
+{% endblock %}
+
+<div id="content-main">
+    {% if cl.formset.errors %}
+        <div class="alert alert-danger alert-block">
+            <button class="close" data-dismiss="alert">×</button>
+            {% blocktrans count cl.formset.errors|length as counter %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktrans %}
+        </div>
+        {{ cl.formset.non_form_errors }}
+    {% endif %}
+
+    <div class="module{% if cl.has_filters %} filtered{% endif %}" id="changelist">
+        
+        {% block date_hierarchy %}
+            {% date_hierarchy cl %}
+        {% endblock %}
+
+      
+      {% if cl.formset %}
+        <div>{{ cl.formset.management_form }}</div>
+      {% endif %}
+      
+      </form>
+    </div>
+  </div>

@@ -1,0 +1,152 @@
+{% load admin_static %}{% load url from future %}<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
+<head>
+<title>{% block title %}{% endblock %}</title>
+<link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "admin/css/bootstrap.min.css" %}{% endblock %}" />
+
+<style>
+body {
+    padding-top: 60px;
+    padding-bottom: 40px;
+}
+</style>
+{% block extrastyle %}{% endblock %}
+{% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}" />{% endif %}
+
+<link rel="stylesheet" type="text/css" href="{% static "admin/css/bootstrap-responsive.min.css" %}" />
+
+<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+<!--[if lt IE 9]>
+<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<script type="text/javascript">window.__admin_media_prefix__ = "{% filter escapejs %}{% static "admin/" %}{% endfilter %}";</script>
+
+{% block extrahead %}{% endblock %}
+
+{% block blockbots %}
+    <meta name="robots" content="NONE,NOARCHIVE" />
+{% endblock %}
+</head>
+{% load i18n %}
+
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}">
+
+{% if not is_popup %}
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container-fluid">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </a>
+            <a class="brand" href="{% url 'admin:index' %}">{% block branding %}{% endblock %}</a>
+            {% if user.is_authenticated %}
+            <div class="btn-group pull-right">
+                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                  <i class="icon-user"></i> {% filter force_escape %}{% firstof user.first_name user.username %}{% endfilter %}
+                  <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    {% block userlinks %}
+                        {% url 'django-admindocs-docroot' as docsroot %}
+                        {% if docsroot %}
+                        <li><a href="{{ docsroot }}">{% trans 'Documentation' %}</a></li>
+                        {% endif %}
+                        <li>
+                            <a href="{% url 'admin:password_change' %}">
+                                {% trans 'Change password' %}
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="{% url 'admin:logout' %}">
+                                {% trans 'Log out' %}
+                            </a>
+                        </li>
+                    {% endblock %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% block nav-global %}{% endblock %}
+{% endif %}
+
+
+<div class="container-fluid">
+    {% if not is_popup %}
+    <ul class="breadcrumb">
+        {% block breadcrumbs %}
+        <li>
+            <a href="{% url 'admin:index' %}">
+                {% trans 'Home' %}
+            </a> 
+            <span class="divider">/</span>
+        </li>
+        <li class="active">
+            {% if title %}
+                {{ title }}
+            {% endif %}
+        </li>
+        {% endblock %}
+    </ul>
+    {% endif %}
+
+    {% block messages %}
+        {% if messages %}
+        <div class="alert alert-info alert-block">
+            <button class="close" data-dismiss="alert">×</button>
+            <ul class="messagelist">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                        {{ message }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    {% endblock messages %}
+
+    {% block content_title %}
+        {% if title %}
+            <div id="content_title">
+                {% block right_of_title %}
+                {% endblock %}
+
+                <h1>{{ title }}</h1>
+                {% block pretitle %}{% endblock %}
+                <div class="clearfix"></div>
+                <hr />
+            </div>
+        {% endif %}
+    {% endblock %}
+
+    <div class="row-fluid">
+        {% block content %}
+            {% block object-tools %}{% endblock %}
+            {{ content }}
+        {% endblock %}
+        
+        {% block sidebar %}{% endblock %}
+    </div>
+
+    {% if not is_popup %}
+        {% block footer %}
+            <footer>
+                <p></p>
+            </footer>
+        {% endblock %}
+    {% endif %}
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="{% static "admin/js/bootstrap.min.js" %}"></script>
+
+{% block extrajs %}{% endblock %}
+
+</body>
+</html>

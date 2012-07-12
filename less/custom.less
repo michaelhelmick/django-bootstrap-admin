@@ -1,0 +1,84 @@
+// Custom.less
+// Custom stuff for the admin!
+
+thead th.blue {
+  #gradient > .vertical(@djangoLightBlue, @djangoBlue);
+}
+
+thead th.blue a, thead th.blue {
+  color: @white;
+}
+
+.nav.nav-tabs.nav-stacked li.active a {
+  #gradient > .vertical(#F7F7F7, #F0F0F0);
+}
+
+#content_title hr {
+  margin: 5px 0 18px;
+}
+
+.required {
+    font-weight: bold;
+}
+
+
+
+.controls select[multiple]{
+    width: 286px;
+}
+
+
+.vDateField {
+    margin-bottom: 5px !important;
+}
+
+
+.calendarnav-arrows{
+    position: relative;
+    top: 23px;
+    width: 170px;
+    left: 3px;
+}
+
+
+.selector-chooser li {
+    list-bullet-style: none;
+}
+
+.selector-chooser {
+    list-style:none;
+    margin: 105px 9px;
+}
+
+select[multiple] {
+    width:100%;
+    margin-bottom:9px;
+}
+
+.selector-available, .selector-chosen{
+    max-height:323px;
+}
+
+.selector-chosen select[multiple]{
+    margin-top:37px;
+}
+
+.selector-chooser li {
+    margin-bottom: 3px;
+}
+
+.selector-chosen select[multiple],
+.selector-available select[multiple] {
+    width:246px;
+    display:block;
+    height:125px;
+}
+
+.selector-chosen .btn, .selector-available .btn {
+    display: block;
+}
+
+.pagination .model_total{
+    line-height: 36px;
+    height:36px;
+}
